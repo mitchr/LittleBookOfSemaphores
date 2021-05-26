@@ -1,6 +1,4 @@
-LATEX = latex
-
-DVIPS = dvips
+VIEWER = atril
 
 PDFFLAGS = -dCompatibilityLevel=1.4 \
            -dCompressPages=true -dUseFlateCompression=true  \
@@ -8,15 +6,19 @@ PDFFLAGS = -dCompatibilityLevel=1.4 \
 
 NAME = LittleBookOfSemaphores
 
-all:	book.tex
+$(NAME).ps: book.tex
 	latex book
 	bibtex book
 	makeindex book
+	latex book
+	latex book
 	dvips -Ppdf -o $(NAME).ps book
-	evince $(NAME).ps
 
-FILES = book.tex book.bib table.eps
-
-distrib: 
+distrib: $(NAME).ps
 	ps2pdf $(PDFFLAGS) $(NAME).ps $(NAME).pdf
-	cp $(NAME).* /home/downey/public_html/greent/semaphores
+
+view: $(NAME).ps
+	$(VIEWER) $(NAME).ps
+
+clean:
+	rm -f book.aux book.bbl book.blg book.dvi book.idx book.ilg book.ind book.log book.out book.toc $(NAME).pdf $(NAME).ps out
