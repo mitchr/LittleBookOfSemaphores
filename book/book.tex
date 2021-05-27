@@ -6033,7 +6033,7 @@ that makes things a little better.
 
 Here is a simple example:
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 from threading_cleanup import *
 
 class Shared:
@@ -6081,7 +6081,7 @@ In this case, we can detect errors by keeping track of the values
 of {\tt counter}.
 
 \pagebreak
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 class Shared:
   def __init__(self, end=10):
     self.counter = 0
@@ -6126,7 +6126,7 @@ to check the result.
 We can automate the checker by making
 a histogram of the results in the array:
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 class Histogram(dict):
   def __init__(self, seq=[]):
     for item in seq:
@@ -6173,7 +6173,7 @@ code in this section from \url{https://greenteapress.com/semaphores/counter.py}
 
 Here is the version of {\tt Shared} I used:
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 class Shared:
     def __init__(self, end=10):
         self.counter = 0
@@ -6190,7 +6190,7 @@ come as no surprise.
 
 Here is my solution:
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 def child_code(shared):
   while True:
     shared.mutex.wait()
@@ -6224,7 +6224,7 @@ off to a good start.
 
 The following program simulates producers and consumers
 adding and removing cokes from a coke machine:
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 import random
 
 class Shared:
@@ -6295,7 +6295,7 @@ You can download the program from
 
 Here are the shared variables I used in my solution:
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 class Shared:
  def __init__(self, start=5, capacity=10):
   self.cokes = Semaphore(start)
@@ -6325,7 +6325,7 @@ Ahem.
 If you've read the rest of this book, you should have had no
 trouble coming up with something at least as good as this:
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 def consume(shared):
     shared.cokes.wait()
     shared.mutex.wait()
@@ -6361,7 +6361,7 @@ examples in this section depend on that code.
 We'll start by defining a structure that contains shared
 variables:
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 typedef struct {
   int counter;
   int end;
@@ -6395,7 +6395,7 @@ of the value of {\tt counter} after each increment.
 Here is the code the parent thread uses to create threads
 and wait for them to complete:
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 int main() {
  int i;
  pthread_t child[NUM_CHILDREN];
@@ -6425,7 +6425,7 @@ Appendix~\ref{ccleanup}.
 
 Here is the code that is executed by each of the children:
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 void child_code(Shared *shared) {
   while(1) {
     if(shared->counter >= shared->end) {
@@ -6448,7 +6448,7 @@ incremented once.  So to check for errors, we can just count the
 number of elements that are not 1:
 
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 void check_array(Shared *shared) {
   int i, errors=0;
 
@@ -6502,7 +6502,7 @@ no errors.
 Here is the version of {\tt Shared} I used in my solution:
 
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 typedef struct {
   int counter;
   int end;
@@ -6537,7 +6537,7 @@ Line~\ref{initmutex} initializes the mutex with the value 1.
 
 Here is the synchronized version of the child code:
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 void child_code(Shared *shared)
 {
   while(1) {
@@ -6577,7 +6577,7 @@ use them to write an implementation of semaphores.
 You might want to use the following utility code in your solutions.
 Here is my wrapper for Pthreads mutexes:
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 typedef pthread_mutex_t Mutex;
 
 Mutex *make_mutex() {
@@ -6602,7 +6602,7 @@ void mutex_unlock(Mutex *mutex) {
 
 And my wrapper for Pthread condition variables:
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 typedef pthread_cond_t Cond;
 
 Cond *make_cond() {
@@ -6631,7 +6631,7 @@ void cond_signal (Cond *cond) {
 Here is the structure definition I used for my semaphores:
 
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 typedef struct {
   int value, wakeups;
   Mutex *mutex;
@@ -6652,7 +6652,7 @@ wait on if they wait on the semaphore.
 Here is the initialization code for this structure:
 
 \pagebreak
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 Semaphore *make_semaphore(int value) {
  Semaphore *semaphore = 
   check_malloc(sizeof(Semaphore));
@@ -6672,7 +6672,7 @@ Here is my implementation of semaphores using Pthread's mutexes
 and condition variables:
 
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 void sem_wait(Semaphore *sem) {
  mutex_lock(sem->mutex);                 (*\label{sementer}*)
  sem->value--;
@@ -6942,7 +6942,7 @@ To compile with the Pthread library in {\tt gcc}, you
 can use the {\tt -l}
 option on the command line:
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 gcc -g -O2 -o array array.c -lpthread
 \end{unbreakable}
 
@@ -6958,7 +6958,7 @@ together with their error-checking code inside my own functions.
 For example, here is a version of {\tt malloc}
 that checks the return value.
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 void *check_malloc(int size) {
   void *p = malloc(size);
   if(p == NULL) {
@@ -7016,7 +7016,7 @@ explaining.  Starting with the second,
 is a user-defined structure that contains shared variables.
 The following {\tt typedef} statement creates the new type:
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 typedef struct {
   int counter;
 } Shared;
@@ -7026,7 +7026,7 @@ In this case, the only shared variable is {\tt counter}.
 {\tt make\_shared} allocates
 space for a {\tt Shared} structure and initializes the contents:
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 Shared *make_shared() {
   int i;
   Shared *shared = 
@@ -7045,7 +7045,7 @@ Anyway, the purpose of this parameter is to specify the function where
 the execution of the new thread will begin.  By convention, this
 function is named {\tt entry}:
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 void *entry(void *arg) {
   Shared *shared = (Shared *) arg;
   child_code(shared);
@@ -7070,7 +7070,7 @@ When one thread want to wait for another thread to complete,
 it invokes {\tt pthread\_join}.
 Here is my wrapper for {\tt pthread\_join}:
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 void join_thread(pthread_t thread) {
   int ret = pthread_join(thread, NULL);
   if(ret == -1) {
@@ -7102,7 +7102,7 @@ a bad idea.  In POSIX, the behavior of the copy is undefined.
 
 In my programs, I use capital letters to denote types with structure semantics, and I always manipulate them with pointers. Fortunately, it is easy to put a wrapper around {\tt sem\_t} to make it behave like a proper object.  Here is the {\tt typedef} and the wrapper that creates and initializes semaphores:
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 typedef sem_t Semaphore;
 
 Semaphore *make_semaphore (int n) {
@@ -7129,7 +7129,7 @@ which functions use which reporting style.
 With these definitions, we can write C code that almost looks
 like a real programming language:
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 Semaphore *mutex = make_semaphore(1);
 sem_wait(mutex);
 sem_post(mutex);
@@ -7138,7 +7138,7 @@ sem_post(mutex);
 Annoyingly, POSIX semaphores use {\tt post} instead of
     {\tt signal}, but we can fix that:
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 int sem_signal(Semaphore *sem) {
   return sem_post(sem);
 }
