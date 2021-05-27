@@ -10,11 +10,11 @@ $(NAME).ps: book.tex
 	latex book
 	bibtex book
 	makeindex book
-	latex book
-	latex book
 	dvips -Ppdf -o $(NAME).ps book
 
 distrib: $(NAME).ps
+	latex book
+	latex book
 	ps2pdf $(PDFFLAGS) $(NAME).ps $(NAME).pdf
 
 view: $(NAME).ps
