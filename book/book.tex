@@ -15,9 +15,10 @@
 \usepackage{makeidx}
 \usepackage{tocloft}
 \usepackage{sectsty}
-\usepackage[paperheight=6.875in,paperwidth=4.25in]{geometry}
+\usepackage[paperheight=6.875in, paperwidth=4.25in]{geometry}
 \usepackage[colorlinks=true, linkcolor=blue, urlcolor=blue]{hyperref}
 \usepackage{breakurl}
+% \usepackage{showframe}
 
 \sectionfont{\raggedright}
 \subsectionfont{\raggedright}
@@ -45,15 +46,35 @@
 
 % prevent lstlistings from being affected by page breaks
 \lstnewenvironment{unbreakable}[1][]
-    {\lstset{#1}\minipage{\linewidth}}
+    {\lstset{#1}\noindent\minipage{\linewidth}}
     {\endminipage}
 
 % Commands that control the appearance of the listings
 \definecolor{light-gray}{gray}{0.95}
 
-\lstset{basicstyle=\footnotesize\tt, frame=single, 
-backgroundcolor=\color{light-gray}, escapeinside={(*}{*)},
-numbers=left, numberstyle=\tiny, numbersep=10pt}
+\lstset{
+    basicstyle=\footnotesize\tt, 
+    frame=single, 
+    backgroundcolor=\color{light-gray}, 
+    escapeinside={(*}{*)},
+    numbers=left, 
+    numberstyle=\tiny, 
+    numbersep=8pt,
+    % xleftmargin=3.4pt, 
+    % xrightmargin=3.4pt
+}
+
+% format hints so that each one starts on the left page
+\newcommand*\cleartoleftpage{%
+  \clearpage
+  \ifodd\thepage
+    \null\newpage
+  \fi
+}
+
+\newenvironment{hint}
+{\cleartoleftpage}
+{\cleartoleftpage}
 
 \makeindex
 
@@ -311,7 +332,7 @@ seem trivial, but the underlying idea, message passing, is a real
 solution for many synchronization problems.
 At the risk of belaboring the obvious, consider this timeline.
 
-\begin{minipage}[t]{0.4\textwidth}
+\noindent\begin{minipage}[t]{0.4\textwidth}
     \begin{lstlisting}[title={Thread A (You)}]{}
 Eat breakfast 
 Work          
@@ -320,7 +341,7 @@ Call Bob
 \end{lstlisting}
 \end{minipage}
 \hfill
-\begin{minipage}[t]{0.4\textwidth}
+\noindent\begin{minipage}[t]{0.4\textwidth}
     \begin{lstlisting}[title={Thread B (Bob)}]{}
 Eat breakfast
 Wait for a call
@@ -381,13 +402,13 @@ is not possible to tell, by looking at the program, what will happen
 when it executes.  Here is a simple example of a
 non-deterministic program:
 
-\begin{minipage}[t]{0.4\textwidth}
+\noindent\begin{minipage}[t]{0.4\textwidth}
     \begin{lstlisting}[title={Thread A}]{}
 print "yes"
 \end{lstlisting}
 \end{minipage}
 \hfill
-\begin{minipage}[t]{0.4\textwidth}
+\noindent\begin{minipage}[t]{0.4\textwidth}
     \begin{lstlisting}[title={Thread B}]{}
 print "no"
 \end{lstlisting}
@@ -439,14 +460,14 @@ reads, does not generally create a synchronization problem.
 In the following example, {\tt x} is a shared variable accessed
 by two writers.
 
-\begin{minipage}[t]{0.4\textwidth}
+\noindent\begin{minipage}[t]{0.4\textwidth}
     \begin{lstlisting}[title={Thread A}]{}
 x = 5
 print x
 \end{lstlisting}
 \end{minipage}
 \hfill
-\begin{minipage}[t]{0.4\textwidth}
+\noindent\begin{minipage}[t]{0.4\textwidth}
     \begin{lstlisting}[title={Thread B}]{}
 x = 7
 \end{lstlisting}
@@ -482,13 +503,13 @@ new value is the old value plus one.  The following example
 shows a shared variable, {\tt count}, being updated concurrently
 by two threads.
 
-\begin{minipage}[t]{0.4\textwidth}
+\noindent\begin{minipage}[t]{0.4\textwidth}
     \begin{lstlisting}[title={Thread A}]{}
 count = count + 1
 \end{lstlisting}
 \end{minipage}
 \hfill
-\begin{minipage}[t]{0.4\textwidth}
+\noindent\begin{minipage}[t]{0.4\textwidth}
     \begin{lstlisting}[title={Thread B}]{}
 count = count + 1
 \end{lstlisting}
@@ -504,14 +525,14 @@ the update takes two steps, a read and a write.
 The problem is more obvious if we rewrite the code with a temporary
 variable, {\tt temp}.
 
-\begin{minipage}[t]{0.4\textwidth}
+\noindent\begin{minipage}[t]{0.4\textwidth}
     \begin{lstlisting}[title={Thread A}]{}
 temp = count
 count = temp + 1
 \end{lstlisting}
 \end{minipage}
 \hfill
-\begin{minipage}[t]{0.4\textwidth}
+\noindent\noindent\begin{minipage}[t]{0.4\textwidth}
     \begin{lstlisting}[title={Thread B}]{}
 temp = count
 count = temp + 1
@@ -556,7 +577,7 @@ Puzzle: Suppose that 100 threads run the following program concurrently
 (if you are not familiar with Python, the {\tt for} loop runs the update
 100 times.):
 
-\begin{unbreakable}[]{}
+\begin{unbreakable}
 for i in range(100):
     temp = count
     count = temp + 1
@@ -758,14 +779,14 @@ problem.
 Assume that we have a semaphore named {\tt sem} with initial value
 0, and that Threads A and B have shared access to it.
 
-\begin{minipage}[t]{0.4\textwidth}
+\noindent\begin{minipage}[t]{0.4\textwidth}
     \begin{unbreakable}[title={Thread A}]{}
 statement a1
 sem.signal()
 \end{unbreakable}
 \end{minipage}
 \hfill
-\begin{minipage}[t]{0.4\textwidth}
+\noindent\begin{minipage}[t]{0.4\textwidth}
     \begin{unbreakable}[title={Thread B}]{}
 sem.wait()
 statement b1
@@ -817,14 +838,14 @@ Puzzle: Generalize the signal pattern so that it works both
 ways.  Thread A has to wait for Thread B and vice versa.  In other
 words, given this code
 
-\begin{minipage}[t]{0.35\textwidth}
+\noindent\begin{minipage}[t]{0.35\textwidth}
     \begin{unbreakable}[title={Thread A}]{}
 statement a1
 statement a2
 \end{unbreakable}
 \end{minipage}
 \hfill
-\begin{minipage}[t]{0.35\textwidth}
+\noindent\begin{minipage}[t]{0.35\textwidth}
     \begin{unbreakable}[title={Thread B}]{}
 statement b1
 statement b2
@@ -845,8 +866,6 @@ rendezvous.  The idea is that two threads rendezvous
 at a point of execution, and neither is allowed to proceed
 until both have arrived.
 
-
-
 \subsection{Rendezvous hint}
 
 The chances are good that you were able to figure out a solution,
@@ -861,7 +880,7 @@ has arrived at the rendezvous, and {\tt bArrived} likewise.
 
 Here is my solution, based on the previous hint:
 
-\begin{minipage}[t]{0.4\textwidth}
+\noindent\begin{minipage}[t]{0.4\textwidth}
     \begin{unbreakable}[title={Thread A}]{}
 statement a1
 aArrived.signal()
@@ -870,7 +889,7 @@ statement a2
 \end{unbreakable}
 \end{minipage}
 \hfill
-\begin{minipage}[t]{0.4\textwidth}
+\noindent\begin{minipage}[t]{0.4\textwidth}
     \begin{unbreakable}[title={Thread B}]{}
 statement b1
 bArrived.signal()
@@ -882,7 +901,7 @@ statement b2
 While working on the previous problem, you might have
 tried something like this:
 
-\begin{minipage}[t]{0.4\textwidth}
+\noindent\begin{minipage}[t]{0.4\textwidth}
     \begin{unbreakable}[title={Thread A}]{}
 statement a1
 bArrived.wait()
@@ -891,7 +910,7 @@ statement a2
 \end{unbreakable}
 \end{minipage}
 \hfill
-\begin{minipage}[t]{0.4\textwidth}
+\noindent\begin{minipage}[t]{0.4\textwidth}
     \begin{unbreakable}[title={Thread B}]{}
 statement b1
 bArrived.signal()
@@ -917,22 +936,23 @@ proceed until both have arrived.
 
 Again, while working on the previous problem, you might have
 tried something like this:
-\begin{minipage}[t]{0.4\textwidth}
-    \begin{unbreakable}[title={Thread A}]{}
+
+\noindent\begin{minipage}[t]{0.4\textwidth}
+    \begin{lstlisting}[title={Thread A}]{}
 statement a1
 bArrived.wait()
 aArrived.signal()
 statement a2
-\end{unbreakable}
+\end{lstlisting}
 \end{minipage}
 \hfill
-\begin{minipage}[t]{0.4\textwidth}
-    \begin{unbreakable}[title={Thread B}]{}
+\noindent\begin{minipage}[t]{0.4\textwidth}
+    \begin{lstlisting}[title={Thread B}]{}
 statement b1
 aArrived.wait()
 bArrived.signal()
 statement b2
-\end{unbreakable}
+\end{lstlisting}
 \end{minipage}
 
 If so, I hope you rejected it quickly, because it has a serious
@@ -969,17 +989,18 @@ the mutex.  Only one thread can hold the mutex at a time.
 Puzzle: Add semaphores to the following example to
 enforce mutual exclusion to the shared variable {\tt count}.
 
-\begin{minipage}[t]{0.4\textwidth}
-    \begin{unbreakable}[title={Thread A}]{}
+\noindent\begin{minipage}[t]{0.4\textwidth}
+    \begin{lstlisting}[title={Thread A}]{}
 count = count + 1
-\end{unbreakable}
+\end{lstlisting}
 \end{minipage}
 \hfill
-\begin{minipage}[t]{0.4\textwidth}
-    \begin{unbreakable}[title={Thread B}]{}
+\noindent\begin{minipage}[t]{0.4\textwidth}
+    \begin{lstlisting}[title={Thread B}]{}
 count = count + 1
-\end{unbreakable}
+\end{lstlisting}
 \end{minipage}
+
 
 
 
@@ -996,7 +1017,7 @@ has to wait for another thread to release the mutex.
 
 Here is a solution:
 
-\begin{minipage}[t]{0.42\textwidth}
+\noindent\begin{minipage}[t]{0.42\textwidth}
     \begin{unbreakable}[basicstyle=\scriptsize,title={Thread A}]{}
 mutex.wait()
  # critical section
@@ -1005,7 +1026,7 @@ mutex.signal()
 \end{unbreakable}
 \end{minipage}
 \hfill
-\begin{minipage}[t]{0.42\textwidth}
+\noindent\begin{minipage}[t]{0.42\textwidth}
     \begin{unbreakable}[basicstyle=\scriptsize,title={Thread B}]{}
 mutex.wait()
  # critical section
@@ -1228,6 +1249,7 @@ Puzzle: Fix the problem.
 
 
 
+
 \subsection{Barrier solution}
 \label{barrier}
 
@@ -1368,6 +1390,8 @@ threads to {\tt wait}, which will cause a deadlock.
 
 Puzzle: Fix the problem.
 
+
+
 \subsection {Reusable barrier non-solution \#2}
 
 This attempt fixes the previous error, but a subtle problem
@@ -1426,6 +1450,7 @@ threads arrive at the first, we lock the second and unlock the first.
 When all the threads arrive at the second we relock the first,
 which makes it safe for the threads to loop around to the beginning,
 and then open the second.
+
 
 \subsection {Reusable barrier solution}
 
@@ -1646,6 +1671,7 @@ followerQueue = Semaphore(0)
 and {\tt followerQueue} is the queue where followers wait.
 
 
+
 \subsection {Queue solution}
 
 Here is the code for leaders:
@@ -1681,6 +1707,7 @@ with the one that brought you\footnote{Song lyric performed by Shania
     Twain}.
 
 Puzzle: write a solution to this ``exclusive queue'' problem.
+
 
 
 \subsection {Exclusive queue hint}
@@ -1844,6 +1871,7 @@ can run concurrently.
 
 Puzzle: Add synchronization statements to the producer and
 consumer code to enforce the synchronization constraints.
+
 
 
 \subsection{Producer-consumer hint}
@@ -2048,9 +2076,7 @@ items = Semaphore(0)
 spaces = Semaphore(buffer.size())
 \end{unbreakable}
 
-When a consumer removes an item it should signal {\tt spaces}.
-When a producer arrives it should decrement {\tt spaces}, at
-which point it might block until the next consumer signals.
+When a consumer removes an item it should signal {\tt spaces}. When a producer arrives it should decrement {\tt spaces}, at which point it might block until the next consumer signals.
 
 
 
@@ -2135,14 +2161,9 @@ mutex = Semaphore(1)
 roomEmpty = Semaphore(1)
 \end{unbreakable}
 
-The counter {\tt readers} keeps track of how many readers
-are in the room.  {\tt mutex} protects the shared counter.
+The counter {\tt readers} keeps track of how many readers are in the room.  {\tt mutex} protects the shared counter.
 
-    {\tt roomEmpty} is 1 if there are no threads (readers or writers) in
-the critical section, and 0 otherwise.  This demonstrates the naming
-convention I use for semaphores that indicate a condition.  In
-this convention, ``wait'' usually means ``wait for the condition to
-be true'' and ``signal'' means ``signal that the condition is true''.
+{\tt roomEmpty} is 1 if there are no threads (readers or writers) in the critical section, and 0 otherwise.  This demonstrates the naming convention I use for semaphores that indicate a condition.  In this convention, ``wait'' usually means ``wait for the condition to be true'' and ``signal'' means ``signal that the condition is true''.
 
 
 
@@ -2398,7 +2419,7 @@ should be allowed to enter until all writers have left the system.
 
 
 
-{\raggedright\subsection{Writer-priority readers-writers hint}}
+{\subsection{Writer-priority readers-writers hint}}
 
 As usual, the hint is in the form of variables
 used in the solution.
@@ -2858,6 +2879,7 @@ In this case, the deadlock is fairly fragile---a very small change
 breaks it.
 
 
+
 \subsection{Dining philosophers hint \#1}
 
 If only four philosophers are allowed at the table at a time,
@@ -3263,6 +3285,7 @@ the table.
 
 Puzzle: modify the previous solution to deal with this
 variation.
+
 
 
 \subsection{Generalized Smokers Problem Hint}
@@ -3777,6 +3800,7 @@ elves enter (increment the elf counter).
 Santa should run in a loop so he can help many sets of elves.
 We can assume that there are exactly 9 reindeer, but there may
 be any number of elves.
+
 
 
 \subsection {Santa problem hint}
@@ -4660,7 +4684,8 @@ checking in and before taking the field.
 
 Here is the code for heathens:
 
-\begin{unbreakable}[title={Modus problem solution}]{}
+% too large to be unbreakable
+\begin{lstlisting}[title={Modus problem solution}]{}
 heathenTurn.wait()
 heathenTurn.signal()
 (*\label{silentmajority}*)
@@ -4702,7 +4727,7 @@ if status == 'heathens rule':
         heathenTurn.wait()
 
 mutex.signal()
-\end{unbreakable}
+\end{lstlisting}
 
 As each student checks in, he has to
 consider the following cases:
@@ -5920,7 +5945,8 @@ to wait, if there is no one eating and no one else ready to
 eat.  And the only way out is if someone else arrives who
 is ready to eat.
 
-\begin{unbreakable}[title={Extended Dining Hall problem solution}]{}
+% too large to be unbreakable
+\begin{lstlisting}[title={Extended Dining Hall problem solution}]{}
 getFood()
 
 mutex.wait()
@@ -5958,7 +5984,7 @@ else:
     mutex.signal()
 
 leave()
-\end{unbreakable}
+\end{lstlisting}
 
 As in the previous solution, I used the ``I'll do it for you''
 pattern so that a waiting student doesn't have to get the mutex
@@ -6949,7 +6975,7 @@ void *check_malloc(int size) {
 I've done the same thing with the Pthread functions I'm going to use;
 here's my wrapper for {\tt pthread\_create}.
 
-\begin{unbreakable}[title={}]{}
+\begin{unbreakable}[]{}
 pthread_t make_thread(
     void *(*entry)(void *), 
     Shared *shared) 
@@ -6960,8 +6986,8 @@ pthread_t make_thread(
   n = pthread_create(&thread, NULL, entry, 
     (void *)shared);
   if(n != 0) {
-    perror ("pthread_create failed");
-    exit (-1);
+    perror("pthread_create failed");
+    exit(-1);
   }
   return thread;
 }
